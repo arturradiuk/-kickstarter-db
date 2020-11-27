@@ -21,16 +21,28 @@ public class ProjectController {
     ProjectRepository projectRepository;
 
     @GetMapping("/projects")
-    public ResponseEntity<List<Project>> getAllProjects() {
+    public ResponseEntity<List<Project>> getAllProjects(@RequestParam(required = false) Integer ID) {
         try {
             List<Project> projects = new ArrayList<Project>();
-            projectRepository.findAll().forEach(projects::add);
 
-            if (projects.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            if (ID == null) {
+                projectRepository.findAll().forEach(projects::add);
+
+                if (projects.isEmpty()) {
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                }
+
+                return new ResponseEntity<>(projects, HttpStatus.OK);
+            } else {
+                Optional<Project> project = projectRepository.findById(ID);
+                projects.add(project.get());
+
+                if (project.isPresent()) {
+                    return new ResponseEntity<>(projects, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
             }
-
-            return new ResponseEntity<>(projects, HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -41,7 +53,6 @@ public class ProjectController {
     public ResponseEntity<Project> getProjectByID(@PathVariable("ID") Integer ID) {
 
         Optional<Project> project = projectRepository.findById(ID);
-        System.out.println(project.isPresent());
 
         if (project.isPresent()) {
             return new ResponseEntity<>(project.get(), HttpStatus.OK);
@@ -52,13 +63,20 @@ public class ProjectController {
     }
 
     @DeleteMapping("/projects")
-    public ResponseEntity<Project> deleteAllProjects() {
+    public ResponseEntity<Project> deleteAllProjects(@RequestParam(required = false) Integer ID) {
         try {
-            projectRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            if (ID == null) {
+                projectRepository.deleteAll();
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                projectRepository.deleteById(ID);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
     }
 
     @DeleteMapping("/projects/{ID}")
@@ -72,8 +90,11 @@ public class ProjectController {
     }
 
     @PostMapping("/projects")
-    public ResponseEntity<Project> createProject(@RequestBody Project project) {
+    public ResponseEntity<Project> createProject(@RequestBody Project project, @RequestParam(required = false) Integer ID) {
         try {
+            if (ID != null) {
+                project.setID(ID);
+            }
             Project _project = projectRepository.save(new Project(project));
             return new ResponseEntity<>(_project, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -93,8 +114,15 @@ public class ProjectController {
     }
 
     @PutMapping("/projects/")
-    public ResponseEntity<Project> updateProject(@RequestBody Project project) {
-        Optional<Project> projectData = projectRepository.findById(project.getID());
+    public ResponseEntity<Project> updateProject(@RequestBody Project project, @RequestParam(required = false) Integer ID) {
+        Optional<Project> projectData;
+        if (ID != null) {
+
+            projectData = projectRepository.findById(ID);
+        } else {
+            projectData = projectRepository.findById(project.getID());
+
+        }
 
         if (projectData.isPresent()) {
             Project _project = projectData.get();
