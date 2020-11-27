@@ -21,13 +21,10 @@ public class ProjectController {
     ProjectRepository projectRepository;
 
     @GetMapping("/projects")
-    public ResponseEntity<List<Project>> getAllProjects(@RequestParam(required = false) String name) {
+    public ResponseEntity<List<Project>> getAllProjects() {
         try {
             List<Project> projects = new ArrayList<Project>();
-            if (name == null) {
-                projectRepository.findAll().forEach(projects::add);
-            } else
-                projectRepository.findByNameContaining(name).forEach(projects::add);
+            projectRepository.findAll().forEach(projects::add);
 
             if (projects.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
