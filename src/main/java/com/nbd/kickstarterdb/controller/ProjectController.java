@@ -21,8 +21,7 @@ public class ProjectController {
     @Autowired
     ProjectRepository projectRepository;
 
-
-    @GetMapping("/projects/get")
+    @GetMapping("/projects")
     public ResponseEntity<List<Project>> getAllProjects(@RequestParam(required = false) String name) {
         try {
             List<Project> projects = new ArrayList<Project>();
@@ -42,7 +41,7 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/projects/get/{ID}")
+    @GetMapping("/projects/{ID}")
     public ResponseEntity<Project> getProjectByID(@PathVariable("ID") Integer ID) {
 
         Optional<Project> project = projectRepository.findById(ID);
@@ -56,7 +55,7 @@ public class ProjectController {
 
     }
 
-    @DeleteMapping("/projects/delete")
+    @DeleteMapping("/projects")
     public ResponseEntity<Project> deleteAllProjects() {
         try {
             projectRepository.deleteAll();
@@ -66,7 +65,7 @@ public class ProjectController {
         }
     }
 
-    @DeleteMapping("/projects/delete/{ID}")
+    @DeleteMapping("/projects/{ID}")
     public ResponseEntity<Project> deleteProjectByID(@PathVariable("ID") Integer ID) {
         try {
             projectRepository.deleteById(ID);
@@ -76,8 +75,7 @@ public class ProjectController {
         }
     }
 
-
-    @PostMapping("/projects/post")
+    @PostMapping("/projects")
     public ResponseEntity<Project> createProject(@RequestBody Project project) {
         try {
             Project _project = projectRepository.save(new Project(project));
@@ -87,8 +85,7 @@ public class ProjectController {
         }
     }
 
-
-    @PostMapping("/projects/post/{ID}")
+    @PostMapping("/projects/{ID}")
     public ResponseEntity<Project> createProject(@PathVariable("ID") Integer ID, @RequestBody Project project) {
         try {
             project.setID(ID);
@@ -99,7 +96,7 @@ public class ProjectController {
         }
     }
 
-    @PutMapping("/projects/put/")
+    @PutMapping("/projects/")
     public ResponseEntity<Project> updateProject(@RequestBody Project project) {
         Optional<Project> projectData = projectRepository.findById(project.getID());
 
@@ -125,8 +122,7 @@ public class ProjectController {
         }
     }
 
-
-    @PutMapping("/projects/put/{ID}")
+    @PutMapping("/projects/{ID}")
     public ResponseEntity<Project> updateProject(@PathVariable("ID") Integer ID, @RequestBody Project project) {
         Optional<Project> projectData = projectRepository.findById(ID);
 
