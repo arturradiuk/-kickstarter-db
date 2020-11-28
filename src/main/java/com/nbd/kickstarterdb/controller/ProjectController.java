@@ -128,7 +128,7 @@ public class ProjectController {
             Project _project = projectData.get();
             _project.setName(project.getName());
             _project.setCategory(project.getCategory());
-            _project.setMain_category(project.getMain_category());
+            _project.setRoot_category(project.getRoot_category());
             _project.setCurrency(project.getCurrency());
             _project.setDeadline(project.getDeadline());
             _project.setGoal(project.getGoal());
@@ -154,7 +154,7 @@ public class ProjectController {
             Project _project = projectData.get();
             _project.setName(project.getName());
             _project.setCategory(project.getCategory());
-            _project.setMain_category(project.getMain_category());
+            _project.setRoot_category(project.getRoot_category());
             _project.setCurrency(project.getCurrency());
             _project.setDeadline(project.getDeadline());
             _project.setGoal(project.getGoal());
