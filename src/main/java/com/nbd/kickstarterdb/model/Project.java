@@ -17,7 +17,7 @@ public class Project {
     private Integer ID;
     private String name;
     private String category;
-    private String root_category;
+    private String main_category;
     private String currency;
     private LocalDateTime deadline;
     private Double goal;
@@ -34,7 +34,7 @@ public class Project {
         this.ID = project.ID;
         this.name = project.name;
         this.category = project.category;
-        this.root_category = project.root_category;
+        this.main_category = project.main_category;
         this.currency = project.currency;
         this.deadline = project.deadline;
         this.goal = project.goal;
