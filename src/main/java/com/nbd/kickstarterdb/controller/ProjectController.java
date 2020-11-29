@@ -37,8 +37,11 @@ public class ProjectController {
     }
 
     @GetMapping("projects")
-    public ResponseEntity<Project> getProjectByID(@RequestParam Integer ID) {
-        Optional<Project> project = projectRepository.findById(ID);
+    public ResponseEntity<Project> getProject(@RequestParam(required = false) Integer ID, @RequestParam(required = false) String name) {
+        if (null != ID && null != name) throw new RuntimeException("Too many parameters");
+        if (null == ID && null == name) throw new RuntimeException("Either name or ID should be passed");
+
+        Optional<Project> project = null != ID ? projectRepository.findById(ID) : projectRepository.findByName(name);
 
         if (project.isPresent()) {
             return new ResponseEntity<>(project.get(), HttpStatus.OK);
@@ -49,8 +52,14 @@ public class ProjectController {
 
     @GetMapping("/projects/{ID}")
     public ResponseEntity<Project> getProjectByIDPath(@PathVariable("ID") Integer ID) {
-        return getProjectByID(ID);
+        return getProject(ID, null);
     }
+
+    // below results in Ambiguous handler methods mapped exception
+//    @GetMapping("/projects/{name}")
+//    public ResponseEntity<Project> getProjectByNamePath(@PathVariable("name") String name) {
+//        return getProject(null, name);
+//    }
 
     @DeleteMapping("/allProjects")
     public ResponseEntity<Project> deleteProjects() {
@@ -60,7 +69,6 @@ public class ProjectController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     @DeleteMapping("projects")
@@ -77,6 +85,7 @@ public class ProjectController {
     public ResponseEntity<Project> deleteProjectByIDPath(@PathVariable("ID") Integer ID) {
         return deleteProjectByID(ID);
     }
+
 
     @PostMapping("/projects")
     public ResponseEntity<Project> createProject(@RequestBody Project project, @RequestParam(required = false) Integer ID) {
@@ -110,7 +119,6 @@ public class ProjectController {
             _project.setName(project.getName());
             _project.setCategory(project.getCategory());
             _project.setMain_category(project.getMain_category());
-            System.out.println(project.getMain_category());
             _project.setCurrency(project.getCurrency());
             _project.setDeadline(project.getDeadline());
             _project.setGoal(project.getGoal());
