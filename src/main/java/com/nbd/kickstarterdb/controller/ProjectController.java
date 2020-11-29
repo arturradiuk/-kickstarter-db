@@ -24,32 +24,34 @@ public class ProjectController {
     public ResponseEntity<List<Project>> getAllProjects() { // todo limit it somehow
         try {
             List<Project> projects = new ArrayList<>(projectRepository.findAll());
-
             if (projects.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-
             return new ResponseEntity<>(projects, HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     @GetMapping("projects")
-    public ResponseEntity<Project> getProjectByID(@RequestParam Integer ID) {
-        Optional<Project> project = projectRepository.findById(ID);
+    public ResponseEntity<Project> getProjectByID(@RequestParam List<Integer> ID) {
+        try {
+            List<Project> projects = new ArrayList<>(projectRepository.findAllById(ID));
+            if (projects.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
 
-        if (project.isPresent()) {
-            return new ResponseEntity<>(project.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity(projects, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     @GetMapping("/projects/{ID}")
     public ResponseEntity<Project> getProjectByIDPath(@PathVariable("ID") Integer ID) {
-        return getProjectByID(ID);
+        List<Integer> temp = new ArrayList<>();
+        temp.add(ID);
+        return getProjectByID(temp);
     }
 
     @DeleteMapping("/allProjects")
@@ -60,7 +62,6 @@ public class ProjectController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     @DeleteMapping("projects")
