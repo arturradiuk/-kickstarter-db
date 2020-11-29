@@ -20,7 +20,7 @@ public class ProjectController {
     @Autowired
     ProjectRepository projectRepository;
 
-    @GetMapping("/AllProjects")
+    @GetMapping("/allProjects")
     public ResponseEntity<List<Project>> getAllProjects() { // todo limit it somehow
         try {
             List<Project> projects = new ArrayList<>(projectRepository.findAll());
@@ -52,7 +52,7 @@ public class ProjectController {
         return getProjectByID(ID);
     }
 
-    @DeleteMapping("/AllProjects")
+    @DeleteMapping("/allProjects")
     public ResponseEntity<Project> deleteProjects() {
         try {
             projectRepository.deleteAll();
