@@ -55,6 +55,29 @@ public class ProjectController {
         return getProject(ID, null);
     }
 
+    // todo take a look at @Arek's previous commit
+//    @GetMapping("/projects/{ID}")
+//    public ResponseEntity<Project> getProjectByIDPath(@PathVariable("ID") Integer ID) {
+//        List<Integer> temp = new ArrayList<>();
+//        temp.add(ID);
+//        return getProjectByID(temp);
+//    }
+
+    @GetMapping("projects")
+    public ResponseEntity<Project> getProjectsByID(@RequestParam List<Integer> ID) {
+        try {
+            List<Project> projects = new ArrayList<>(projectRepository.findAllById(ID));
+            if (projects.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity(projects, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     // below results in Ambiguous handler methods mapped exception
 //    @GetMapping("/projects/{name}")
 //    public ResponseEntity<Project> getProjectByNamePath(@PathVariable("name") String name) {
