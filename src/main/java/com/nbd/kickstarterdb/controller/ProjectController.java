@@ -36,7 +36,7 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("projects")
+    @GetMapping("project")
     public ResponseEntity<Project> getProject(@RequestParam(required = false) Integer ID, @RequestParam(required = false) String name) {
         if (null != ID && null != name) throw new RuntimeException("Too many parameters");
         if (null == ID && null == name) throw new RuntimeException("Either name or ID should be passed");
@@ -71,7 +71,7 @@ public class ProjectController {
         }
     }
 
-    @DeleteMapping("projects")
+    @DeleteMapping("project")
     public ResponseEntity<Project> deleteProjectByID(@RequestParam Integer ID) {
         try {
             projectRepository.deleteById(ID);
@@ -87,7 +87,7 @@ public class ProjectController {
     }
 
 
-    @PostMapping("/projects")
+    @PostMapping("/project")
     public ResponseEntity<Project> createProject(@RequestBody Project project, @RequestParam(required = false) Integer ID) {
         try {
             if (ID != null) {
@@ -105,7 +105,7 @@ public class ProjectController {
         return createProject(project, ID);
     }
 
-    @PutMapping("/projects")
+    @PutMapping("/project")
     public ResponseEntity<Project> updateProject(@RequestBody Project project, @RequestParam(required = false) Integer ID) {
         Optional<Project> projectData;
         if (ID != null) {
