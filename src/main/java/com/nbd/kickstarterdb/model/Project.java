@@ -47,4 +47,8 @@ public class Project {
         this.usd_pledged_real = project.usd_pledged_real;
         this.usd_goal_real = project.usd_goal_real;
     }
+
+    public String getName() {
+        return name;
+    }
 }

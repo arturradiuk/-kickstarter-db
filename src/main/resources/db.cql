@@ -2,7 +2,7 @@ use ks_projects;
 
 create table kickstarter_db.ks_projects(
   ID int primary key,
-  name varchar,
+  name varchar index,
   category varchar,
   main_category varchar,
   currency varchar,
@@ -17,6 +17,9 @@ create table kickstarter_db.ks_projects(
   usd_pledged_real double,
   usd_goal_real double
 );
+
+CREATE INDEX name_index
+ON kickstarter_db.ks_projects(name);
 
 drop table kickstarter_db.ks_projects;
 

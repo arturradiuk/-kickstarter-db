@@ -37,52 +37,38 @@ public class ProjectController {
     }
 
     @GetMapping("project")
-    public ResponseEntity<Project> getProject(@RequestParam(required = false) Integer ID, @RequestParam(required = false) String name) {
-        if (null != ID && null != name) throw new RuntimeException("Too many parameters");
-        if (null == ID && null == name) throw new RuntimeException("Either name or ID should be passed");
-
-        Optional<Project> project = null != ID ? projectRepository.findById(ID) : projectRepository.findByName(name);
-
-        if (project.isPresent()) {
-            return new ResponseEntity<>(project.get(), HttpStatus.OK);
+    public ResponseEntity<Project> getProject(@RequestParam(required = false) List<Integer> ID, @RequestParam(required = false) List<String> name) {
+        //if (ID != null && null != name) throw new RuntimeException("Too many parameters");
+        if (ID == null && null == name) throw new RuntimeException("Either name or ID should be passed");
+        List<Project> projects = new ArrayList<>();
+        if(name != null) {
+            for (String n : name)
+                projects.add(projectRepository.findByName(n).get());
+        }
+        if(ID != null){
+            List<Project> projects2 = projectRepository.findAllById(ID);
+            if(name != null) {
+                for (String n : name)
+                    projects2.removeIf(project -> project.getName().equals(n));
+            }
+            projects.addAll(projects2);
+        }
+        if (!projects.isEmpty()) {
+            return new ResponseEntity(projects, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/project/{ID}")
-    public ResponseEntity<Project> getProjectByIDPath(@PathVariable("ID") Integer ID) {
-        return getProject(ID, null);
-    }
 
     // todo take a look at @Arek's previous commit
-//    @GetMapping("/projects/{ID}")
-//    public ResponseEntity<Project> getProjectByIDPath(@PathVariable("ID") Integer ID) {
-//        List<Integer> temp = new ArrayList<>();
-//        temp.add(ID);
-//        return getProjectByID(temp);
-//    }
-
-    @GetMapping("projects")
-    public ResponseEntity<Project> getProjectsByID(@RequestParam List<Integer> ID) {
-        try {
-            List<Project> projects = new ArrayList<>(projectRepository.findAllById(ID));
-            if (projects.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-
-            return new ResponseEntity(projects, HttpStatus.OK);
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @GetMapping("/projects/{ID}")
+    public ResponseEntity<Project> getProjectByIDPath(@PathVariable("ID") Integer ID) {
+        List<Integer> temp = new ArrayList<>();
+        temp.add(ID);
+        return getProject(temp,null);
     }
 
-    // below results in Ambiguous handler methods mapped exception
-//    @GetMapping("/projects/{name}")
-//    public ResponseEntity<Project> getProjectByNamePath(@PathVariable("name") String name) {
-//        return getProject(null, name);
-//    }
 
     @DeleteMapping("/allProjects")
     public ResponseEntity<Project> deleteProjects() {
