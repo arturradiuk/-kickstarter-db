@@ -37,39 +37,36 @@ public class ProjectController {
     }
 
     @GetMapping("project")
-    public ResponseEntity<Project> getProject(@RequestParam(required = false) List<Integer> ID, @RequestParam(required = false) List<String> name) {
+    public ResponseEntity<List<Project>> getProject(@RequestParam(required = false) List<Integer> ID, @RequestParam(required = false) List<String> name) {
         //if (ID != null && null != name) throw new RuntimeException("Too many parameters");
         if (ID == null && null == name) throw new RuntimeException("Either name or ID should be passed");
+
         List<Project> projects = new ArrayList<>();
-        Optional<Project> temp = null;
-        if(name != null) {
-            for (String n : name)
-                temp = projectRepository.findByName(n);
-                if(temp.isPresent())
-                    projects.add(temp.get());
-        }
-        if(ID != null){
-            List<Project> projects2 = projectRepository.findAllById(ID);
-            if(name != null) {
-                for (String n : name)
-                    projects2.removeIf(project -> project.getName().equals(n));
+        if (ID != null) projects.addAll(projectRepository.findAllById(ID));
+        if (name != null) {
+            for (String _name : name) {
+                Optional<Project> p = projectRepository.findByName(_name);
+
+                if (p.isPresent()) {
+                    if (!projects.contains(p)) projects.add(p.get());
+                }
             }
-            projects.addAll(projects2);
         }
+
         if (!projects.isEmpty()) {
-            return new ResponseEntity(projects, HttpStatus.OK);
+            return new ResponseEntity<>(projects, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
 
-    // todo take a look at @Arek's previous commit
+    // todo ether this should accept Integer or List and handle accordingly
     @GetMapping("/projects/{ID}")
-    public ResponseEntity<Project> getProjectByIDPath(@PathVariable("ID") Integer ID) {
-        List<Integer> temp = new ArrayList<>();
-        temp.add(ID);
-        return getProject(temp,null);
+    public ResponseEntity<List<Project>> getProjectByIDPath(@PathVariable("ID") List<Integer> ID) {
+//        List<Integer> temp = new ArrayList<>();
+//        temp.add(ID);
+        return getProject(ID,null);
     }
 
 
