@@ -63,7 +63,7 @@ public class ProjectController {
 //        return getProjectByID(temp);
 //    }
 
-    @GetMapping("project")
+    @GetMapping("projects")
     public ResponseEntity<Project> getProjectsByID(@RequestParam List<Integer> ID) {
         try {
             List<Project> projects = new ArrayList<>(projectRepository.findAllById(ID));
