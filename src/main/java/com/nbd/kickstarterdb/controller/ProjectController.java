@@ -66,7 +66,7 @@ public class ProjectController {
 
 
     // todo ether this should accept Integer or List and handle accordingly
-    @GetMapping("/projects/{ID}")
+    @GetMapping("/project/{ID}")
     public ResponseEntity<List<Project>> getProjectByIDPath(@PathVariable("ID") List<Integer> ID) {
 //        List<Integer> temp = new ArrayList<>();
 //        temp.add(ID);
