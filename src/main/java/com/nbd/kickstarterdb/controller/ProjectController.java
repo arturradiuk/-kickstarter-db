@@ -41,9 +41,12 @@ public class ProjectController {
         //if (ID != null && null != name) throw new RuntimeException("Too many parameters");
         if (ID == null && null == name) throw new RuntimeException("Either name or ID should be passed");
         List<Project> projects = new ArrayList<>();
+        Optional<Project> temp = null;
         if(name != null) {
             for (String n : name)
-                projects.add(projectRepository.findByName(n).get());
+                temp = projectRepository.findByName(n);
+                if(temp.isPresent())
+                    projects.add(temp.get());
         }
         if(ID != null){
             List<Project> projects2 = projectRepository.findAllById(ID);
