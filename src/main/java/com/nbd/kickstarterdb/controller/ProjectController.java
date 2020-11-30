@@ -3,6 +3,8 @@ package com.nbd.kickstarterdb.controller;
 import com.nbd.kickstarterdb.model.Project;
 import com.nbd.kickstarterdb.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.cassandra.core.query.CassandraPageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,16 +23,18 @@ public class ProjectController {
     ProjectRepository projectRepository;
 
     @GetMapping("/allProjects")
-    public ResponseEntity<List<Project>> getAllProjects() { // todo limit it somehow
-        try {
-            List<Project> projects = new ArrayList<>(projectRepository.findAll());
+    public ResponseEntity<List<Project>> getAllProjects(@RequestParam(required = false, defaultValue = "0") Integer pageNum,
+                                                        @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
 
-            if (projects.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        try {
+            Slice<Project> results = projectRepository.findAll(CassandraPageRequest.first(pageSize));
+            for (int i = 0; i < pageNum; i++) {
+                if (!results.hasNext()) return new ResponseEntity<>(null, HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
+                results = projectRepository.findAll(results.nextPageable());
             }
 
+            List<Project> projects = results.getContent();
             return new ResponseEntity<>(projects, HttpStatus.OK);
-
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -66,7 +70,7 @@ public class ProjectController {
     public ResponseEntity<List<Project>> getProjectByIDPath(@PathVariable("ID") List<Integer> ID) {
 //        List<Integer> temp = new ArrayList<>();
 //        temp.add(ID);
-        return getProject(ID,null);
+        return getProject(ID, null);
     }
 
 

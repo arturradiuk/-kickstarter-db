@@ -3,7 +3,8 @@ package com.nbd.kickstarterdb.repository;
 import com.nbd.kickstarterdb.model.Project;
 import org.springframework.data.cassandra.repository.AllowFiltering;
 import org.springframework.data.cassandra.repository.CassandraRepository;
-import org.springframework.data.cassandra.repository.Query;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,5 +17,6 @@ public interface ProjectRepository extends CassandraRepository<Project, Integer>
     List<Project> findByNameContaining(String name);
 
     Optional<Project> findByName(String name);
+    Slice<Project> findAll(Pageable pageable);
 
 }
