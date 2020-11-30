@@ -50,7 +50,7 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/projects/{ID}")
+    @GetMapping("/project/{ID}")
     public ResponseEntity<Project> getProjectByIDPath(@PathVariable("ID") Integer ID) {
         return getProject(ID, null);
     }
@@ -63,7 +63,7 @@ public class ProjectController {
 //        return getProjectByID(temp);
 //    }
 
-    @GetMapping("projects")
+    @GetMapping("project")
     public ResponseEntity<Project> getProjectsByID(@RequestParam List<Integer> ID) {
         try {
             List<Project> projects = new ArrayList<>(projectRepository.findAllById(ID));
@@ -104,7 +104,7 @@ public class ProjectController {
         }
     }
 
-    @DeleteMapping("/projects/{ID}")
+    @DeleteMapping("/project/{ID}")
     public ResponseEntity<Project> deleteProjectByIDPath(@PathVariable("ID") Integer ID) {
         return deleteProjectByID(ID);
     }
@@ -123,7 +123,7 @@ public class ProjectController {
         }
     }
 
-    @PostMapping("/projects/{ID}")
+    @PostMapping("/project/{ID}")
     public ResponseEntity<Project> createProjectPath(@RequestBody Project project, @PathVariable("ID") Integer ID) {
         return createProject(project, ID);
     }
@@ -160,7 +160,7 @@ public class ProjectController {
         }
     }
 
-    @PutMapping("/projects/{ID}")
+    @PutMapping("/project/{ID}")
     public ResponseEntity<Project> updateProjectPath(@RequestBody Project project, @PathVariable("ID") Integer ID) {
         return updateProject(project, ID);
     }
