@@ -48,7 +48,7 @@ public class ProjectController {
                 Optional<Project> p = projectRepository.findByName(_name);
 
                 if (p.isPresent()) {
-                    if (!projects.contains(p)) projects.add(p.get());
+                    if (!projects.contains(p.get())) projects.add(p.get());
                 }
             }
         }
