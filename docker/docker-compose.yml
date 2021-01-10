@@ -1,0 +1,64 @@
+services:
+  cassandra-cluster-seed-node:
+    image: cassandra:latest
+    ports:
+      - "9042:9042"
+    environment:
+      - "CASSANDRA_SEEDS=cassandra-cluster-seed-node"
+      - "CASSANDRA_CLUSTER_NAME=Cassandra Cluster"
+      - "CASSANDRA_DC=se1"
+      - "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch"
+    networks:
+      cluster_net:
+        ipv4_address: 10.10.10.3
+
+
+  cassandra-node1:
+    image: cassandra:latest
+    environment:
+      - "CASSANDRA_SEEDS=cassandra-cluster-seed-node"
+      - "CASSANDRA_CLUSTER_NAME=Cassandra Cluster"
+      - "CASSANDRA_DC=se1"
+      - "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch"
+    depends_on:
+      - cassandra-cluster-seed-node
+    networks:
+      cluster_net:
+        ipv4_address: 10.10.10.1
+
+  cassandra-node2:
+    image: cassandra:latest
+    environment:
+      - "CASSANDRA_SEEDS=cassandra-cluster-seed-node"
+      - "CASSANDRA_CLUSTER_NAME=Cassandra Cluster"
+      - "CASSANDRA_DC=se1"
+      - "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch"
+    depends_on:
+      - cassandra-cluster-seed-node
+    networks:
+      cluster_net:
+        ipv4_address: 10.10.10.2
+
+  java-crud:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - cassandra-cluster-seed-node
+      - cassandra-node1
+      - cassandra-node2
+    environment:
+      - "REPLICATION_FACTOR=3"
+    networks:
+      cluster_net:
+        ipv4_address: 10.10.10.111
+
+networks:
+  cluster_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.10.0/24
+          gateway: 10.10.10.254
